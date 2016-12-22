@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 using Xunit;
-
 using NCI.OCPL.Utils.Testing;
 using NCI.OCPL.Api.BestBets.Tests.Util;
 
