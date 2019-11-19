@@ -16,7 +16,9 @@ namespace NCI.OCPL.Api.BestBets
         /// <returns></returns>
         string Language { get; }
 
-        //No clue what this is...
+        /// <summary>
+        ///No clue what this is...
+        /// </summary>
         bool Display { get; }
 
         /// <summary>

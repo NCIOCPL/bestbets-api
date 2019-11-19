@@ -197,7 +197,7 @@ namespace NCI.OCPL.Api.BestBets.Services
         /// <param name="cleanedTerm">The Cleaned Term</param>
         /// <param name="language">The language of the best bets to fetch</param>
         /// <param name="numTokens">The number of tokens an analyzer would break this up into</param>
-        /// <returns>IEnumerable<BestBetsMatch> suitable for iterating through</returns>
+        /// <returns>IEnumerable&lt;BestBetsMatch&gt; suitable for iterating through</returns>
         private async Task<IEnumerable<BestBetsMatch>> GetBestBetMatchesAsync(string collection, string cleanedTerm, string language, int numTokens)
         {
             //Pool up all the fetches to be called in one shot
@@ -211,7 +211,7 @@ namespace NCI.OCPL.Api.BestBets.Services
 
                 return results.SelectMany(i => i);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

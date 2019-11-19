@@ -14,6 +14,9 @@ using NCI.OCPL.Api.Common;
 
 namespace NCI.OCPL.Api.BestBets.Controllers
 {
+    /// <summary>
+    /// Controller for the /bestbets route.
+    /// </summary>
     [Route("[controller]")]
     public class BestBetsController : Controller
     {
@@ -22,6 +25,9 @@ namespace NCI.OCPL.Api.BestBets.Controllers
         private readonly IHealthCheckService _healthService;
         private readonly ILogger<BestBetsController> _logger;
 
+        /// <summary>
+        /// Status to return when the system is operating correctly.
+        /// </summary>
         public const string HEALTHY_STATUS = "alive!";
 
         /// <summary>

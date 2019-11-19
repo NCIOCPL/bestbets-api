@@ -3,6 +3,9 @@ using Nest;
 
 namespace NCI.OCPL.Api.BestBets
 {
+    /// <summary>
+    /// Represents Display information about a Best Bet
+    /// </summary>
     [ElasticsearchType(Name = "categorydisplay")]
     public class BestBetsCategoryDisplay : IBestBetDisplay
     {
@@ -30,6 +33,9 @@ namespace NCI.OCPL.Api.BestBets
         [Text(Name = "weight")]
         public int Weight { get; set; }
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public BestBetsCategoryDisplay() { }
     }
 }
