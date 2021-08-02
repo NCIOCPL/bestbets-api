@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>NCI.OCPL.Api.BestBets.Tests</AssemblyName>
     <PackageId>NCI.OCPL.Api.BestBets.Tests</PackageId>
@@ -16,38 +16,20 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/NCI.OCPL.Api.BestBets/NCI.OCPL.Api.BestBets.csproj" />
-    <ProjectReference Include="../../src/NCI.OCPL.Api.Common/NCI.OCPL.Api.Common.csproj" />
-    <ProjectReference Include="../../src/NCI.OCPL.Api.Common.Testing/NCI.OCPL.Api.Common.Testing.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.6.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
-    <PackageReference Include="xunit" Version="2.3.1" />
-    <PackageReference Include="Moq" Version="4.8.2" />
-    <PackageReference Include="RichardSzalay.MockHttp" Version="3.3.0" />
-    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
-    <PackageReference AllowExplicitVersion="True" Include="Microsoft.AspNetCore.App" Version="2.1.4" />
-    <PackageReference Include="coverlet.msbuild" Version="2.8.1">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="coverlet.msbuild" Version="3.0.*" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.*" />
+    <PackageReference Include="NCI.OCPL.Api.Common" Version="1.0.*" />
+    <PackageReference Include="NCI.OCPL.Api.Common.Testing" Version="1.0.*" />
+    <PackageReference Include="xunit" Version="2.4.*" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.*" />
+    <PackageReference Include="Moq" Version="4.13.*" />
+    <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.*" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Tests\Util\" />
-    <Folder Include="Tests\TestDataObjects\ESDisplayTestObjects\" />
-    <Folder Include="TestData\ESDisplayData\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="TestData\ESMatchData\breastcancer_1.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\ESMatchData\breastcancer_2.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\ESMatchData\breastcancer_analyze.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Folder Include="Tests\**" />
   </ItemGroup>
 </Project>
