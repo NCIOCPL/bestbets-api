@@ -4,6 +4,10 @@
 appsettings.*.json
 !appsettings.inttest.json
 
+# files created when running integration tests.
+src/NCI.OCPL.Api.BestBets/appsettings.inttest.json
+src/NCI.OCPL.Api.BestBets/hosting.json
+
 # User-specific files
 *.suo
 *.user

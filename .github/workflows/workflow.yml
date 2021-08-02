@@ -13,6 +13,10 @@ on:
       - 'feature/**'
   ## Any pull request. Yes the syntax looks weird
   pull_request:
+env:
+  DOTNET_NOLOGO: true
+  NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
 jobs:
 
   extract_build_info:
@@ -65,19 +69,20 @@ jobs:
   test_build_release:
     name: Test, Build, Publish on OS ${{ matrix.operating-system }}
     needs: extract_build_info
+    env:
+      OWNER: ${{ needs.extract_build_info.outputs.repo_owner }}
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
         operating-system: [ubuntu-latest, windows-latest, macOS-latest]
     steps:
-      - uses: actions/checkout@master
-        ## using latest LTS releases - also it MUST be the SDK version,
-        ## which have stupidly high numbers for the patch version.
-        ## '3.1.100' breaks our app, so let's just use 2.x
+      - uses: actions/checkout@v2
+        ## using latest LTS releases - also it MUST be the SDK version.
       - name: Setup dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '2.1.607'
+          dotnet-version: '3.1.*'
+          source-url: "https://nuget.pkg.github.com/${{ env.OWNER }}/index.json"
       - name: Build with dotnet
         run: dotnet build --configuration Release /WarnAsError
       - name: Unit Tests (with Coverage)
@@ -124,19 +129,18 @@ jobs:
         options: --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
 
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
       - name: Download Published Artifact
         uses: actions/download-artifact@v1
         with:
           name: bestbets-api-ubuntu-latest
           path: built-api
-        ## using latest LTS releases - also it MUST be the SDK version,
-        ## which have stupidly high numbers for the patch version.
-        ## '3.1.100' breaks our app, so let's just use 2.x
+        ## using latest LTS releases - also it MUST be the SDK version.
       - name: Setup dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '2.1.607'
+          dotnet-version: '3.1.*'
+          source-url: "https://nuget.pkg.github.com/${{ env.OWNER }}/index.json"
       - name: Load Data into elasticsearch & prepare for tests
         env:
           ELASTIC_SEARCH_HOST: http://localhost:${{ job.services.elasticsearch.ports[9200] }}

@@ -7,3 +7,4 @@ Feature: test bestbets controller health
     Given path '/BestBets/status'
     When method get
     Then status 200
+    And match response == "alive!"

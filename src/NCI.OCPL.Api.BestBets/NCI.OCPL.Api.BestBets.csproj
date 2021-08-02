@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>NCI.OCPL.Api.BestBets</AssemblyName>
@@ -15,13 +15,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
-    <PackageReference Include="NEST" Version="5.6.1" />
-    <PackageReference Include="NSwag.AspNetCore" Version="11.17.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\NCI.OCPL.Api.Common\NCI.OCPL.Api.Common.csproj" />
+    <PackageReference Include="NCI.OCPL.Api.Common" Version="1.0.*" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.11.*" />
+    <PackageReference Include="NEST" Version="5.6.*" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Models\ErrorMessage.cs" />

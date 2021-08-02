@@ -30,6 +30,14 @@ services:
         ports:
             # Lets make it one more than the default aspnetcore app
             - "5000:5000"
+        volumes:
+            # Project root
+            - ../..:/app
+            # Integration configuration files we don't want in the source tree.
+            - ../../integration-tests/docker-bestbets-api/api/runtime/appsettings.inttest.json:/app/src/NCI.OCPL.Api.BestBets/appsettings.inttest.json
+            - ../../integration-tests/docker-bestbets-api/api/runtime/hosting.json:/app/src/NCI.OCPL.Api.BestBets/hosting.json
+            # Use the user's existing GitHub credentials
+            - ~/.nuget/NuGet/NuGet.Config:/root/.nuget/NuGet/NuGet.Config
         ## NOTE: This does NOT mean that this machine will wait
         ## for elasticsearch to be running, just that the
         ## elasticsearch container should be running first.
