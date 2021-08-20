@@ -1,0 +1,8 @@
+[
+    {
+        "html": "<div class=\"managed list\">\n<ul>\n<li class=\"general-list-item general list-item\">\n<!-- cgvSnListItemGeneral -->\n<!-- Image -->\n<!-- End Image -->\n<div class=\"title-and-desc title desc container\"><a class=\"title\" href=\"/types/brain/patient/adult-brain-treatment-pdq\">Adult Central Nervous System Tumors Treatment (PDQ®)–Patient Version</a><!-- start description -->\n<div class=\"description\"><p class=\"body\">Adult central nervous system tumor treatment may include surgery, radiosurgery, radiation therapy, chemotherapy, surveillance, and targeted therapy. Treatment depends on the tumor type. Learn more about brain and spinal tumor treatment in this expert-reviewed summary.</p></div><!-- end description --></div><!-- end title & desc container -->\n</li><li class=\"general-list-item general list-item\">\n<!-- cgvSnListItemGeneral -->\n<!-- Image -->\n<!-- End Image -->\n<div class=\"title-and-desc title desc container\"><a class=\"title\" href=\"/types/brain/patient/child-cns-embryonal-treatment-pdq\">Childhood Central Nervous System Embryonal Tumors Treatment (PDQ®)–Patient Version</a><!-- start description -->\n<div class=\"description\"><p class=\"body\">Childhood central nervous system embryonal tumors and pineal tumors are treated with surgery, radiation therapy, chemotherapy, high-dose chemotherapy with stem cell rescue and targeted therapy. Learn more in this expert-reviewed summary.</p></div><!-- end description --></div><!-- end title & desc container -->\n</li></ul>\n</div>",
+        "id": "36128",
+        "name": "Medulloblastoma",
+        "weight": 25
+    }
+]
