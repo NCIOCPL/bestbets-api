@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Commit hash of the http://github.com/nciocpl/bestbets-content respository to use
-# when loading data into elastic search.
-BESTBETS_CONTENT_COMMIT=0032561df90ba71f4c19e955bcfc1ddb6cab8b85
-
 ## Use the Environment var or the default
 if [[ -z "${ELASTIC_SEARCH_HOST}" ]]; then
     ELASTIC_HOST="http://localhost:9200"
@@ -41,12 +37,18 @@ until [[ "$health" = 'green' ]]; do
 done
 echo "ES status is green"
 
-## retrieve bestbets-loader submodule
-git submodule update --init
-pushd "${DIR}/bestbets-loader"
-## Override bestbets loader config to use the specified content commit
-## as well as the dynamic elasticsearch port.
-export NODE_CONFIG="{ \"pipeline\": { \"source\": { \"config\": { \"resourcesPath\": \"/tree/${BESTBETS_CONTENT_COMMIT}/content\" } }, \"transformers\": [ { \"module\": \"./lib/transformers/category-to-match-transformer\", \"config\": { \"eshosts\": [\"${ELASTIC_HOST}\"], \"settingsPath\": \"es-mappings/settings.json\", \"analyzer\": \"nostem\"} } ], \"loader\": { \"config\": { \"eshosts\": [ \"${ELASTIC_HOST}\" ] } } } }"
-npm install
-node index.js
-popd
+pushd $DIR/../data
+echo "Load the index mapping"
+MAPPING_DATA="$(jq --slurp '.[0] + .[1]' es-mappings/settings.json es-mappings/mappings.json)"
+MAPPING_LOAD_CMD="curl -fsS -H \"Content-Type: application/x-ndjson\" -XPUT ${ELASTIC_HOST}/bestbets_v1 --data-binary '$MAPPING_DATA'"
+mapping_output=$(eval $MAPPING_LOAD_CMD)
+echo $mapping_output
+
+echo "Load the records"
+BULK_LOAD_CMD="curl -fsS -H \"Content-Type: application/x-ndjson\" -XPOST ${ELASTIC_HOST}/_bulk --data-binary \"@bestbets.jsonl\""
+load_output=$(eval $BULK_LOAD_CMD)
+if [[ $? -eq 0 ]]; then
+    echo "Data loaded successfully."
+else
+    echo $load_output
+fi
