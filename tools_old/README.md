@@ -1,2 +1,0 @@
-# Old Tool
-The files in this folder are for the old dockerized API and the automation tooling around it. These files are still of value as we rebuild the pipeline. If you need to find the history, please check out https://github.com/NCIOCPL/bestbets-api/tree/1a2369f4095a324f93bfabdf9d66e6ab6bc42ccd/tools. 
