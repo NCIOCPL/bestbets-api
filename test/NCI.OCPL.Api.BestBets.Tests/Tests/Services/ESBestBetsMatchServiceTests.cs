@@ -20,21 +20,21 @@ namespace NCI.OCPL.Api.BestBets.Tests
 
         public static IEnumerable<object[]> GetMatchesData => new[] {
             // "pancoast" is a simple test as it only has 1 hit, 1 word, and 1 BB category.
-            new object[] { 
-                "pancoast", 
-                "en", 
-                new ESMatchConnection("pancoast"), 
+            new object[] {
+                "pancoast",
+                "en",
+                new ESMatchConnection("pancoast"),
                 new ESMatchTokenizerConnection("pancoast"),
-                new string[] { "36012" } 
+                new string[] { "36012" }
             },
             // "breast cancer" is more complicated, it has 1 hit, 2 words, and the BB category
             // it matches is on page 2.  It also has a ton of negations for breast.
-            new object[] { 
-                "breast cancer", 
-                "en", 
+            new object[] {
+                "breast cancer",
+                "en",
                 new ESMatchConnection("breastcancer"),
                 new ESMatchTokenizerConnection("breastcancer"),
-                new string[] { "36408" } 
+                new string[] { "36408" }
             },
             // "breast cancer treatment" is more complicated, it has 1 hit, 3 words, and no results for last page.
             // It also has a ton of negations for various combinations.
@@ -61,15 +61,15 @@ namespace NCI.OCPL.Api.BestBets.Tests
                 new ESMatchConnection("seerstatfactsheet"),
                 new ESMatchTokenizerConnection("seerstatfactsheet"),
                 new string[] { "36681" }
-            },
+            }
         };
 
 
         [Theory, MemberData(nameof(GetMatchesData))]
         public async void GetMatches_Normal(
-            string searchTerm, 
-            string lang, 
-            ESMatchConnection connection, 
+            string searchTerm,
+            string lang,
+            ESMatchConnection connection,
             ESMatchTokenizerConnection tokenizerConn,
             string[] expectedCategories
         )

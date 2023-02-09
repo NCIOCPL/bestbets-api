@@ -2,14 +2,14 @@ using System;
 
 using Nest;
 
-namespace NCI.OCPL.Api.BestBets 
+namespace NCI.OCPL.Api.BestBets
 {
     /// <summary>
     /// Represents a Best Best Match from the Search Engine
     /// </summary>
-    [ElasticsearchType(Name = "synonyms")]
+    [ElasticsearchType(RelationName = "synonyms")]
     public class BestBetsMatch
-    {       
+    {
         /// <summary>
         /// Gets or sets the name of the category for this Best Bet Match
         /// </summary>
@@ -47,11 +47,11 @@ namespace NCI.OCPL.Api.BestBets
         public bool IsExact {get; set;}
 
         /// <summary>
-        /// Gets or sets the number of tokens the ElasticSearch analyzer would 
+        /// Gets or sets the number of tokens the ElasticSearch analyzer would
         /// return for this synonym.
         /// </summary>
         [Number(Name = "tokencount")]
         public int TokenCount {get; set;}
-    
+
     }
 }

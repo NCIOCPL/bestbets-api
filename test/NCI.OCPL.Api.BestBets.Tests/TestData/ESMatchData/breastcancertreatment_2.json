@@ -19,8 +19,8 @@
           "category": "Dietary Fat",
           "synonym": "breast cancer",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 2,
           "contentid": "35520"
         }
@@ -34,8 +34,8 @@
           "category": "NCI-60",
           "synonym": "breast cancer",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 2,
           "contentid": "36138"
         }
@@ -49,8 +49,8 @@
           "category": "Clinical Trials: Patient Care Costs",
           "synonym": "breast cancer",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 2,
           "contentid": "36431"
         }
@@ -64,8 +64,8 @@
           "category": "Breast Cancer",
           "synonym": "Breast Cancer",
           "language": "en",
-          "is_negated": 0,
-          "is_exact": 0,
+          "is_negated": false,
+          "is_exact": false,
           "tokencount": 2,
           "contentid": "36408"
         }

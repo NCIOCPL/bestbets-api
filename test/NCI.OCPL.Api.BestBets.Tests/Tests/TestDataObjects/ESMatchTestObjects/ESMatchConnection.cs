@@ -16,7 +16,7 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESMatchTestData
 {
     /// <summary>
     /// Class used for mocking BestBet Match requests to Elasticsearch.  This should be
-    /// used as the base class of test specific Connections object passed into an ElasticClient. 
+    /// used as the base class of test specific Connections object passed into an ElasticClient.
     /// </summary>
     /// <seealso cref="NCI.OCPL.Api.BestBets.Tests.Util.ElasticsearchInterceptingConnection" />
     public class ESMatchConnection : ElasticsearchInterceptingConnection
@@ -36,7 +36,7 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESMatchTestData
         {
             this.TestFilePrefix = testFilePrefix;
 
-            //Add Handlers            
+            //Add Handlers
             this.RegisterRequestHandlerForType<Nest.SearchResponse<BestBetsMatch>>((req, res) =>
             {
                 //Get the request parameters

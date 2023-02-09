@@ -19,8 +19,8 @@
           "category": "Carcinosarcoma",
           "synonym": "breast",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 1,
           "contentid": "35535"
         }
@@ -34,8 +34,8 @@
           "category": "Tumor Marker Research",
           "synonym": "breast",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 1,
           "contentid": "35604"
         }
@@ -49,8 +49,8 @@
           "category": "Clinical Trials",
           "synonym": "breast",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 1,
           "contentid": "35571"
         }
@@ -64,8 +64,8 @@
           "category": "Understanding Cancer Series",
           "synonym": "breast",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 1,
           "contentid": "35771"
         }
@@ -79,8 +79,8 @@
           "category": "Adenoid Cystic Carcinoma",
           "synonym": "breast",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 1,
           "contentid": "35774"
         }
@@ -94,8 +94,8 @@
           "category": "Epidemiology",
           "synonym": "breast",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 1,
           "contentid": "35785"
         }
@@ -109,8 +109,8 @@
           "category": "TNM System",
           "synonym": "breast",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 1,
           "contentid": "35815"
         }
@@ -124,8 +124,8 @@
           "category": "Ordering CDs/DVDs",
           "synonym": "breast",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 1,
           "contentid": "35916"
         }
@@ -139,8 +139,8 @@
           "category": "Fact Sheets",
           "synonym": "breast",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 1,
           "contentid": "35912"
         }
@@ -154,8 +154,8 @@
           "category": "Support",
           "synonym": "breast",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 1,
           "contentid": "36297"
         }

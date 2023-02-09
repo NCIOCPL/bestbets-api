@@ -24,7 +24,7 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESBestBetsDisplayServiceTests
 {
     public class GetBestBetForDisplayTests
     {
-        
+
         public static IEnumerable<object[]> JsonData => new[] {
             new object[] { new PancoastTumorDisplayTestData() },
             new object[] { new FotosDeCancerDisplayTestData() }
@@ -69,11 +69,17 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESBestBetsDisplayServiceTests
             // sets up the request URI correctly.
             IBestBetDisplay actDisplay = await bbClient.GetBestBetForDisplay("preview", "431121");
 
-            Assert.Equal(esURI.Segments, new string[] { "/", "bestbets_preview_v1/", "categorydisplay/", "431121" }, new ArrayComparer());
+            Assert.Equal(
+                new string[] { "/", "bestbets_preview_v1/", "_doc/", "431121" },
+                esURI.Segments,
+                new ArrayComparer());
 
             actDisplay = await bbClient.GetBestBetForDisplay("live", "431121");
 
-            Assert.Equal(esURI.Segments, new string[] { "/", "bestbets_live_v1/", "categorydisplay/", "431121" }, new ArrayComparer());
+            Assert.Equal(
+                new string[] { "/", "bestbets_live_v1/", "_doc/", "431121" },
+                esURI.Segments,
+                new ArrayComparer());
         }
 
         /// <summary>
@@ -113,7 +119,7 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESBestBetsDisplayServiceTests
             ElasticsearchInterceptingConnection conn = new ElasticsearchInterceptingConnection();
             conn.RegisterRequestHandlerForType<Nest.GetResponse<BestBetsCategoryDisplay>>((req, res) =>
             {
-                
+
             });
 
             //While this has a URI, it does not matter, an InMemoryConnection never requests
