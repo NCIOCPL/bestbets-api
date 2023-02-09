@@ -13,8 +13,8 @@ using NCI.OCPL.Api.Common;
 
 namespace NCI.OCPL.Api.BestBets.Services
 {
-    //TODO: Remove APIExceptions from this class and make them regular exceptions.  
-    //TODO: Maybe remove the logger too as this class no longer needs to log, the calling class should.  
+    //TODO: Remove APIExceptions from this class and make them regular exceptions.
+    //TODO: Maybe remove the logger too as this class no longer needs to log, the calling class should.
 
     /// <summary>
     /// Class represents an Elasticsearch based Best Bets Match Service
@@ -28,7 +28,7 @@ namespace NCI.OCPL.Api.BestBets.Services
 
         /// <summary>
         /// Creates a new instance of a ESBestBetsMatchService
-        /// </summary>        
+        /// </summary>
         public ESBestBetsMatchService(IElasticClient client,
             ITokenAnalyzerService tokenAnalyzer,
             IOptions<CGBBIndexOptions> config,
@@ -53,7 +53,7 @@ namespace NCI.OCPL.Api.BestBets.Services
             // Step 2. Get Number of Tokens in the term
             int numTokens = await _tokenAnalyzer.GetTokenCount(collection, cleanedTerm);
 
-            // Step 4. Iterate over the matches    
+            // Step 4. Iterate over the matches
             IEnumerable<BestBetsMatch> matches = await GetBestBetMatchesAsync(
                 collection,
                 cleanedTerm,
@@ -69,7 +69,7 @@ namespace NCI.OCPL.Api.BestBets.Services
         }
 
         /// <summary>
-        /// Process a list of BestBetsMatches and returns an array of category IDs for display. 
+        /// Process a list of BestBetsMatches and returns an array of category IDs for display.
         /// </summary>
         /// <param name="matches">A list of matches</param>
         /// <param name="numTokens">The number of tokens in the search term</param>
@@ -84,7 +84,7 @@ namespace NCI.OCPL.Api.BestBets.Services
 
             // Iterate through ALL the matches and extract the categories that
             // should be displayed.  There may be multiple matches for a single
-            // category, the probability increase with the number of tokens. 
+            // category, the probability increase with the number of tokens.
             foreach (BestBetsMatch match in matches)
             {
 
@@ -97,12 +97,12 @@ namespace NCI.OCPL.Api.BestBets.Services
                 if (match.IsNegated)
                 {
                     // A negated match will remove a category from the display.
-                    // For example, "Breast Cancer Treatment" would return the 
+                    // For example, "Breast Cancer Treatment" would return the
                     // Best Bets for "Breast Cancer" and "Breast Cancer Treatment".
-                    // However, as "Breast Cancer Treatment" is more specific, a 
+                    // However, as "Breast Cancer Treatment" is more specific, a
                     // BB editor has created a Negated synonyn of "Treatment" for
                     // the "Breast Cancer" category.  So we should only show
-                    // "Breast Cancer Treatment" to the user. 
+                    // "Breast Cancer Treatment" to the user.
                     if (!excludedIDs.Contains(match.ContentID))
                     {
                         excludedIDs.Add(match.ContentID);
@@ -129,7 +129,7 @@ namespace NCI.OCPL.Api.BestBets.Services
         /// Gets a "round" of Best Bet matches asynchronously
         /// </summary>
         /// <returns>The set of matches.</returns>
-        /// <param name="collection">The search index to use</param> 
+        /// <param name="collection">The search index to use</param>
         /// <param name="cleanedTerm">The search phrase</param>
         /// <param name="searchTokenCount">Search token count.</param>
         /// <param name="lang">Lang.</param>
@@ -138,18 +138,20 @@ namespace NCI.OCPL.Api.BestBets.Services
         {
             //This is the query
             var matchQuery = new NumericRangeQuery { Field = "tokencount", LessThanOrEqualTo = matchedTokenCount } &&
-                             new TermQuery { Field = "is_exact", Value = 0 } &&
+                             new TermQuery { Field = "is_exact", Value = false } &&
                              new TermQuery { Field = "language", Value = lang } &&
-                             new MatchQuery { Field = "synonym", Query = cleanedTerm, MinimumShouldMatch = matchedTokenCount };
+                             new MatchQuery { Field = "synonym", Query = cleanedTerm, MinimumShouldMatch = matchedTokenCount } &&
+                             new TermQuery { Field = "record_type", Value = "synonyms" };
 
             if (searchTokenCount == matchedTokenCount)
             {
                 //Add in exact match query too
                 matchQuery = matchQuery ||
                              new TermQuery { Field = "tokencount", Value = matchedTokenCount } &&
-                             new TermQuery { Field = "is_exact", Value = 1 } &&
+                             new TermQuery { Field = "is_exact", Value = true } &&
                              new TermQuery { Field = "language", Value = lang } &&
-                             new MatchQuery { Field = "synonym", Query = cleanedTerm, MinimumShouldMatch = matchedTokenCount };
+                             new MatchQuery { Field = "synonym", Query = cleanedTerm, MinimumShouldMatch = matchedTokenCount } &&
+                             new TermQuery { Field = "record_type", Value = "synonyms"};
             }
 
             try
@@ -193,7 +195,7 @@ namespace NCI.OCPL.Api.BestBets.Services
         /// <summary>
         /// Helper function that generates a list of best bet matches to iterate through.
         /// </summary>
-        /// <param name="collection">The search index to use</param> 
+        /// <param name="collection">The search index to use</param>
         /// <param name="cleanedTerm">The Cleaned Term</param>
         /// <param name="language">The language of the best bets to fetch</param>
         /// <param name="numTokens">The number of tokens an analyzer would break this up into</param>

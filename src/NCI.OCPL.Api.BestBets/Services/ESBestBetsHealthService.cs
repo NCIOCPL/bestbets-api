@@ -67,7 +67,7 @@ namespace NCI.OCPL.Api.BestBets.Services
         private async Task<bool> IsHostHealthy(string alias)
         {
             // Use the cluster health API to verify that the Best Bets index is functioning.
-            // Maps to https://ncias-d1592-v.nci.nih.gov:9299/_cluster/health/bestbets?pretty (or other server)
+            // Maps to https://localhost:9200/_cluster/health/bestbets?pretty (or other server)
             //
             // References:
             // https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-health.html
@@ -75,7 +75,8 @@ namespace NCI.OCPL.Api.BestBets.Services
 
             try
             {
-                IClusterHealthResponse response = await _elasticClient.ClusterHealthAsync(hd => hd.Index(alias));
+                //ClusterHealthResponse response = await _elasticClient.Cluster.HealthAsync(hd => hd.Index(alias));
+                ClusterHealthResponse response = await _elasticClient.Cluster.HealthAsync(null, hd=> hd.Index(alias));
 
                 if (!response.IsValid)
                 {
@@ -84,7 +85,7 @@ namespace NCI.OCPL.Api.BestBets.Services
                 }
                 else
                 {
-                    if (response.Status == "green" || response.Status == "yellow")
+                    if (response.Status == Health.Green || response.Status == Health.Yellow)
                     {
                         //This is the only condition that will return true
                         return true;

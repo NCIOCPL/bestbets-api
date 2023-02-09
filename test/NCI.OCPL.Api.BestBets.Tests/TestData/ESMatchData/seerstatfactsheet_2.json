@@ -19,8 +19,8 @@
           "category": "Cancer Information Service (CIS)",
           "synonym": "fact sheets",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 2,
           "contentid": "36832"
         }
@@ -34,8 +34,8 @@
           "category": "Fact Sheets",
           "synonym": "Fact Sheets",
           "language": "en",
-          "is_negated": 0,
-          "is_exact": 0,
+          "is_negated": false,
+          "is_exact": false,
           "tokencount": 2,
           "contentid": "35912"
         }

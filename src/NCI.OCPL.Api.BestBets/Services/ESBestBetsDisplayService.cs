@@ -66,12 +66,12 @@ namespace NCI.OCPL.Api.BestBets.Services
 
             if (isValid)
             {
-                IGetResponse<BestBetsCategoryDisplay> response = null;
+                GetResponse<BestBetsCategoryDisplay> response = null;
 
                 try
                 {
                     // Fetch the category display with the given ID from the API.
-                    response = await _elasticClient.GetAsync<BestBetsCategoryDisplay>(new GetRequest(alias, "categorydisplay", categoryID));
+                    response = await _elasticClient.GetAsync<BestBetsCategoryDisplay>(new GetRequest(alias, categoryID));
 
                 }
                 catch (Exception ex)

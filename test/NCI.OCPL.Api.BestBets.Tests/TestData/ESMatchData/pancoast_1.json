@@ -19,8 +19,8 @@
           "category": "Pancoast Tumor",
           "synonym": "pancoast",
           "language": "en",
-          "is_negated": 0,
-          "is_exact": 0,
+          "is_negated": false,
+          "is_exact": false,
           "tokencount": 1,
           "contentid": "36012"
         }

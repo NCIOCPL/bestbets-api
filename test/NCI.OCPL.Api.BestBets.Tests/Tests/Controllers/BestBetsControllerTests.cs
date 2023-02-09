@@ -72,14 +72,14 @@ namespace NCI.OCPL.Api.BestBets.Tests
         }
 
         [Fact]
-        public async void Get_Error_LanguageEmpty() 
+        public async void Get_Error_LanguageEmpty()
         {
             Mock<IBestBetsDisplayService> displayService = new Mock<IBestBetsDisplayService>();
             Mock<IBestBetsMatchService> matchService = new Mock<IBestBetsMatchService>();
             Mock<IHealthCheckService> healthService = new Mock<IHealthCheckService>();
 
             // Create instance of controller
-            BestBetsController controller = new BestBetsController(                
+            BestBetsController controller = new BestBetsController(
                 matchService.Object,
                 displayService.Object,
                 healthService.Object,
@@ -90,14 +90,14 @@ namespace NCI.OCPL.Api.BestBets.Tests
         }
 
         [Fact]
-        public async void Get_Error_LanguageBad() 
+        public async void Get_Error_LanguageBad()
         {
             Mock<IBestBetsDisplayService> displayService = new Mock<IBestBetsDisplayService>();
             Mock<IBestBetsMatchService> matchService = new Mock<IBestBetsMatchService>();
             Mock<IHealthCheckService> healthService = new Mock<IHealthCheckService>();
 
             // Create instance of controller
-            BestBetsController controller = new BestBetsController(                
+            BestBetsController controller = new BestBetsController(
                 matchService.Object,
                 displayService.Object,
                 healthService.Object,
@@ -108,14 +108,14 @@ namespace NCI.OCPL.Api.BestBets.Tests
         }
 
         [Fact]
-        public async void Get_Error_SearchTermBad() 
+        public async void Get_Error_SearchTermBad()
         {
             Mock<IBestBetsDisplayService> displayService = new Mock<IBestBetsDisplayService>();
             Mock<IBestBetsMatchService> matchService = new Mock<IBestBetsMatchService>();
             Mock<IHealthCheckService> healthService = new Mock<IHealthCheckService>();
 
             // Create instance of controller
-            BestBetsController controller = new BestBetsController(                
+            BestBetsController controller = new BestBetsController(
                 matchService.Object,
                 displayService.Object,
                 healthService.Object,
@@ -127,11 +127,11 @@ namespace NCI.OCPL.Api.BestBets.Tests
 
 
         [Theory, MemberData(nameof(XmlDeserializingData))]
-        public async void Get_EnglishTerm(string searchTerm, BaseDisplayTestData displayData) 
+        public async void Get_EnglishTerm(string searchTerm, BaseDisplayTestData displayData)
         {
 
 
-            Mock<IBestBetsDisplayService> displayService = new Mock<IBestBetsDisplayService>(); 
+            Mock<IBestBetsDisplayService> displayService = new Mock<IBestBetsDisplayService>();
             displayService
                 .Setup(
                     dispSvc => dispSvc.GetBestBetForDisplay(
@@ -161,7 +161,7 @@ namespace NCI.OCPL.Api.BestBets.Tests
                 .Returns(Task.FromResult(true));
 
             // Create instance of controller
-            BestBetsController controller = new BestBetsController(                
+            BestBetsController controller = new BestBetsController(
                 matchService.Object,
                 displayService.Object,
                 healthService.Object,
@@ -191,7 +191,7 @@ namespace NCI.OCPL.Api.BestBets.Tests
                 NullLogger<BestBetsController>.Instance
                 );
 
-            var actual = await controller.GetStatus(); 
+            var actual = await controller.GetStatus();
 
             Assert.Equal(BestBetsController.HEALTHY_STATUS, actual, ignoreCase: true);
         }
