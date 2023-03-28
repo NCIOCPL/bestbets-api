@@ -22,13 +22,15 @@ Feature: A single best bet may have multiple synonyms
             | hepatico          | es   | synonyms-es-higado.json          |
             | hígado            | es   | synonyms-es-higado.json          |
 
+
     Scenario Outline: All items matching at least search token should be returned
         for language '<lang>' and synonymList '<synonymList>'
+
         Given path 'BestBets', 'live', lang, synonymList
         When method get
         Then status 200
-        And match response == read( expected )
+        And match response == read(expectation)
         Examples:
-            | synonymList        | lang | expected                          |
+            | synonymList        | lang | expectation                       |
             | visual DCIS        | en   | synonyms-en-multiple-matches.json |
             | fotos Medicamentos | es   | synonyms-es-multiple-matches.json |

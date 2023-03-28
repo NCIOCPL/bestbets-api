@@ -19,8 +19,8 @@
           "category": "SEER",
           "synonym": "seer stat",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 1,
+          "is_negated": true,
+          "is_exact": true,
           "tokencount": 2,
           "contentid": "36681"
         }

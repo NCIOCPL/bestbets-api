@@ -26,10 +26,10 @@ namespace NCI.OCPL.Api.BestBets.Services
 
         /// <summary>
         /// Creates a new instance of a ESBestBetsMatchService
-        /// </summary>        
+        /// </summary>
         public ESTokenAnalyzerService(IElasticClient client,
                         IOptions<CGBBIndexOptions> bestbetsConfig,
-                        ILogger<ESTokenAnalyzerService> logger) //Needs someway to get an IElasticClient 
+                        ILogger<ESTokenAnalyzerService> logger) //Needs someway to get an IElasticClient
         {
             _elasticClient = client;
             _bestbetsConfig = bestbetsConfig.Value;
@@ -44,14 +44,16 @@ namespace NCI.OCPL.Api.BestBets.Services
         /// <returns>The number of tokens in the term</returns>
         public async Task<int> GetTokenCount(string collection, string term)
         {
-            IAnalyzeResponse analyzeResponse;
+            string[] ALLOWED_TOKEN_TYPES = { "<ALPHANUM>", "<NUM>"};
+
+            AnalyzeResponse analyzeResponse;
             string indexForAnalysis = (collection == "preview") ?
                                         _bestbetsConfig.PreviewAliasName :
                                         _bestbetsConfig.LiveAliasName;
 
             try
-            {                
-                analyzeResponse = await this._elasticClient.AnalyzeAsync(
+            {
+                analyzeResponse = await this._elasticClient.Indices.AnalyzeAsync(
                     a => a
                     .Index(indexForAnalysis)
                     .Analyzer("nostem")
@@ -65,7 +67,7 @@ namespace NCI.OCPL.Api.BestBets.Services
                 _logger.LogInformation("Trying again for term '{0}", term);
 
                 // Try again. (this is really just for when we run out of sockets)
-                analyzeResponse = await this._elasticClient.AnalyzeAsync(
+                analyzeResponse = await this._elasticClient.Indices.AnalyzeAsync(
                     a => a
                     .Index(indexForAnalysis)
                     .Analyzer("nostem")
@@ -80,14 +82,7 @@ namespace NCI.OCPL.Api.BestBets.Services
                 throw new APIErrorException(500, "Errors Occurred.");
             }
 
-            int numberOfTokens = 0;
-            if (analyzeResponse.Tokens != null)
-            {
-                foreach (AnalyzeToken t in analyzeResponse.Tokens)
-                {
-                    numberOfTokens++;
-                }
-            }
+            int numberOfTokens = analyzeResponse.Tokens.Count(tok => ALLOWED_TOKEN_TYPES.Contains(tok.Type));
 
             return numberOfTokens;
         }

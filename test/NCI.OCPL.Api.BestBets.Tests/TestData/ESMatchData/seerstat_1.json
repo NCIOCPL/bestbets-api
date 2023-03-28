@@ -19,8 +19,8 @@
           "category": "Fact Sheets",
           "synonym": "SEER",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 1,
           "contentid": "35912"
         }
@@ -34,8 +34,8 @@
           "category": "Tobacco Monographs",
           "synonym": "SEER",
           "language": "en",
-          "is_negated": 1,
-          "is_exact": 0,
+          "is_negated": true,
+          "is_exact": false,
           "tokencount": 1,
           "contentid": "36685"
         }
@@ -49,8 +49,8 @@
           "category": "SEER",
           "synonym": "SEER",
           "language": "en",
-          "is_negated": 0,
-          "is_exact": 0,
+          "is_negated": false,
+          "is_exact": false,
           "tokencount": 1,
           "contentid": "36681"
         }
@@ -64,8 +64,8 @@
           "category": "SEER",
           "synonym": "SEER",
           "language": "en",
-          "is_negated": 0,
-          "is_exact": 0,
+          "is_negated": false,
+          "is_exact": false,
           "tokencount": 1,
           "contentid": "36681"
         }

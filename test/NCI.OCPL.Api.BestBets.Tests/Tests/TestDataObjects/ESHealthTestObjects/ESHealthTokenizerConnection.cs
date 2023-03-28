@@ -35,7 +35,7 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESHealthTestData
         {
             this.TestFilePrefix = testFilePrefix;
 
-            //Add Handlers            
+            //Add Handlers
             this.RegisterRequestHandlerForType<Nest.ClusterHealthResponse>((req, res) =>
             {
                 //I don't care about the request for this... for now.

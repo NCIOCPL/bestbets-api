@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 using Elasticsearch.Net;
 
-
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -35,7 +34,7 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESMatchTestData
         {
             this.TestFilePrefix = testFilePrefix;
 
-            //Add Handlers            
+            //Add Handlers
             this.RegisterRequestHandlerForType<Nest.AnalyzeResponse>((req, res) =>
             {
                 //I don't care about the request for this... for now.

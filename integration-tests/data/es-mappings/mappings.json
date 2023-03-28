@@ -1,0 +1,44 @@
+{
+  "mappings": {
+      "properties": {
+        "category": {
+          "type": "text",
+          "analyzer": "nostem"
+        },
+        "name": {
+          "type": "text",
+          "index": "false"
+        },
+        "contentid": {
+          "type": "keyword"
+        },
+        "record_type": {
+          "type": "keyword"
+        },
+        "is_exact": {
+          "type": "boolean"
+        },
+        "is_negated": {
+          "type": "boolean"
+        },
+        "language": {
+          "type": "keyword"
+        },
+        "synonym": {
+          "type": "text",
+          "analyzer": "nostem"
+        },
+        "tokencount": {
+          "type": "integer"
+        },
+        "weight": {
+          "type": "integer",
+          "index": "false"
+        },
+        "content": {
+          "type": "text",
+          "index": "false"
+        }
+    }
+  }
+}

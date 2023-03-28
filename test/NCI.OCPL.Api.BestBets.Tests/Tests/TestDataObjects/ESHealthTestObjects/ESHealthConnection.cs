@@ -16,7 +16,7 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESHealthTestData
 {
     /// <summary>
     /// Class used for mocking BestBet HealthCheck requests to Elasticsearch.  This should be
-    /// used as the base class of test specific Connections object passed into an ElasticClient. 
+    /// used as the base class of test specific Connections object passed into an ElasticClient.
     /// </summary>
     /// <seealso cref="NCI.OCPL.Api.BestBets.Tests.Util.ElasticsearchInterceptingConnection" />
     public class ESHealthConnection : ElasticsearchInterceptingConnection
@@ -35,7 +35,7 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESHealthTestData
         {
             this.TestFilePrefix = testFilePrefix;
 
-            //Add Handlers            
+            //Add Handlers
             this.RegisterRequestHandlerForType<Nest.ClusterHealthResponse>((req, res) =>
             {
                 // Health check is a GET request (e.g. https://localhost:9299/_cluster/health/bestbets?pretty)

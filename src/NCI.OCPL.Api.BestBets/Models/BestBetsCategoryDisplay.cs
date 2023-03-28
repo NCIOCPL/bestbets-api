@@ -6,7 +6,7 @@ namespace NCI.OCPL.Api.BestBets
     /// <summary>
     /// Represents Display information about a Best Bet
     /// </summary>
-    [ElasticsearchType(Name = "categorydisplay")]
+    [ElasticsearchType(RelationName = "categorydisplay")]
     public class BestBetsCategoryDisplay : IBestBetDisplay
     {
         /// <summary>
