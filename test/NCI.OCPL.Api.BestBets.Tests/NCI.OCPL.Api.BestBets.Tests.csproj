@@ -1,11 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <DebugType>portable</DebugType>
-    <AssemblyName>NCI.OCPL.Api.BestBets.Tests</AssemblyName>
-    <PackageId>NCI.OCPL.Api.BestBets.Tests</PackageId>
-    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <TargetFramework>netcoreapp6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
