@@ -1,16 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <DebugType>portable</DebugType>
-    <PreserveCompilationContext>true</PreserveCompilationContext>
-    <AssemblyName>NCI.OCPL.Api.BestBets</AssemblyName>
-    <OutputType>Exe</OutputType>
-    <PackageId>NCI.OCPL.Api.BestBets</PackageId>
-    <AssetTargetFallback>$(PackageTargetFallback);dotnet5.6;portable-net45+win8</AssetTargetFallback>
-  </PropertyGroup>
-
-  <PropertyGroup>
+    <TargetFramework>netcoreapp6.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
@@ -18,9 +9,5 @@
     <PackageReference Include="NCI.OCPL.Api.Common" Version="2.*" />
     <PackageReference Include="NSwag.AspNetCore" Version="13.11.*" />
     <PackageReference Include="NEST" Version="7.9.*" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Models\ErrorMessage.cs" />
-    <Compile Remove="Helpers\APIErrorException.cs" />
   </ItemGroup>
 </Project>
