@@ -76,8 +76,8 @@ namespace NCI.OCPL.Api.BestBets.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError("Could not fetch category ID " + categoryID, ex);
-                    throw new APIErrorException(500, "Could not fetch category ID " + categoryID);
+                    _logger.LogError(ex, $"Could not fetch category ID {categoryID}");
+                    throw new APIErrorException(500, $"Could not fetch category ID {categoryID}");
                 }
 
                 // If the API's response isn't valid, throw an error and return 500 status code.
