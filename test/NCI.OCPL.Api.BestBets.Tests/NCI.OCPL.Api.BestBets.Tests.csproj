@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp6.0</TargetFramework>
+    <TargetFramework>netcoreapp8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,8 +17,8 @@
   <ItemGroup>
     <PackageReference Include="coverlet.msbuild" Version="3.0.*" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.*" />
-    <PackageReference Include="NCI.OCPL.Api.Common" Version="2.*" />
-    <PackageReference Include="NCI.OCPL.Api.Common.Testing" Version="2.*" />
+    <PackageReference Include="NCI.OCPL.Api.Common" Version="3.0.0" />
+    <PackageReference Include="NCI.OCPL.Api.Common.Testing" Version="3.0.0" />
     <PackageReference Include="xunit" Version="2.4.*" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.*" />
     <PackageReference Include="Moq" Version="4.13.*" />
