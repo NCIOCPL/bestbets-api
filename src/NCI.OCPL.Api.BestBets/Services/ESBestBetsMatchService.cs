@@ -171,7 +171,7 @@ namespace NCI.OCPL.Api.BestBets.Services
                 //Test if response is valid
                 if (!response.IsValid)
                 {
-                    _logger.LogError("Elasticsearch Response is Not Valid. Term '{0}'", cleanedTerm);
+                    _logger.LogError("Elasticsearch Response is Not Valid. Term '{0}'", cleanedTerm.Replace(Environment.NewLine, String.Empty));
                     _logger.LogError("Returned debug info: {0}.", response.DebugInformation);
                     throw new APIErrorException(500, "Errors Occurred.");
                 }
@@ -185,7 +185,7 @@ namespace NCI.OCPL.Api.BestBets.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError("Elasticsearch request failed for Term '{0}'", cleanedTerm);
+                _logger.LogError("Elasticsearch request failed for Term '{0}'", cleanedTerm.Replace(Environment.NewLine, String.Empty));
                 _logger.LogError(ex.Message);
                 throw new APIErrorException(500, "Errors Occurred.");
             }
