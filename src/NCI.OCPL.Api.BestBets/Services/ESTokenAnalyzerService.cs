@@ -63,7 +63,8 @@ namespace NCI.OCPL.Api.BestBets.Services
             catch(UnexpectedElasticsearchClientException ex)
             {
                 _logger.LogError(ex, "Error analyzing token count for term '{0}'. Reason: '{1}'. DebugInformation: {2}",
-                    term, ex.FailureReason, ex.DebugInformation);
+                    term.Replace(Environment.NewLine, String.Empty),
+                    ex.FailureReason, ex.DebugInformation);
                 _logger.LogInformation("Trying again for term '{0}", term);
 
                 // Try again. (this is really just for when we run out of sockets)

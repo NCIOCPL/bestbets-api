@@ -76,7 +76,7 @@ namespace NCI.OCPL.Api.BestBets.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"Could not fetch category ID {categoryID}");
+                    _logger.LogError(ex, $"Could not fetch category ID {categoryID.Replace(Environment.NewLine, String.Empty)}");
                     throw new APIErrorException(500, $"Could not fetch category ID {categoryID}");
                 }
 
