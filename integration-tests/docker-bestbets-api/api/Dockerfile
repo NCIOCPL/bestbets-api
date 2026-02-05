@@ -1,5 +1,5 @@
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/sdk:6.0
+FROM mcr.microsoft.com/dotnet/sdk:8.0
 
 # Get the NIH Root certificates and install them so we work on VPN
 # Download from https://ocio.nih.gov/Smartcard/Pages/PKI_chain.aspx
