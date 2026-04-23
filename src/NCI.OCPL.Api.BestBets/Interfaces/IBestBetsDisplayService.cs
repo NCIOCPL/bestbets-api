@@ -1,4 +1,3 @@
-
 using System.Threading.Tasks;
 
 namespace NCI.OCPL.Api.BestBets

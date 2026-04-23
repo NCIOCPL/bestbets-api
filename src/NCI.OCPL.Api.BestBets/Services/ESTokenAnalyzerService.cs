@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-using Elasticsearch.Net;
-using Nest;
+using Elastic.Clients.Elasticsearch;
+using Elastic.Clients.Elasticsearch.IndexManagement;
 
 using NCI.OCPL.Api.Common;
 
@@ -20,14 +19,14 @@ namespace NCI.OCPL.Api.BestBets.Services
     /// <seealso cref="NCI.OCPL.Api.BestBets.ITokenAnalyzerService" />
     public class ESTokenAnalyzerService : ITokenAnalyzerService
     {
-        private IElasticClient _elasticClient;
+        private ElasticsearchClient _elasticClient;
         private CGBBIndexOptions _bestbetsConfig;
         private readonly ILogger<ESTokenAnalyzerService> _logger;
 
         /// <summary>
         /// Creates a new instance of a ESBestBetsMatchService
         /// </summary>
-        public ESTokenAnalyzerService(IElasticClient client,
+        public ESTokenAnalyzerService(ElasticsearchClient client,
                         IOptions<CGBBIndexOptions> bestbetsConfig,
                         ILogger<ESTokenAnalyzerService> logger) //Needs someway to get an IElasticClient
         {
@@ -46,7 +45,7 @@ namespace NCI.OCPL.Api.BestBets.Services
         {
             string[] ALLOWED_TOKEN_TYPES = { "<ALPHANUM>", "<NUM>"};
 
-            AnalyzeResponse analyzeResponse;
+            AnalyzeIndexResponse analyzeResponse;
             string indexForAnalysis = (collection == "preview") ?
                                         _bestbetsConfig.PreviewAliasName :
                                         _bestbetsConfig.LiveAliasName;
@@ -54,32 +53,32 @@ namespace NCI.OCPL.Api.BestBets.Services
             try
             {
                 analyzeResponse = await this._elasticClient.Indices.AnalyzeAsync(
-                    a => a
-                    .Index(indexForAnalysis)
-                    .Analyzer("nostem")
-                    .Text(term)
+                    new AnalyzeIndexRequest(indexForAnalysis)
+                    {
+                        Analyzer = "nostem",
+                        Text = new[] { term }
+                    }
                 );
             }
-            catch(UnexpectedElasticsearchClientException ex)
+            catch(Exception ex)
             {
-                _logger.LogError(ex, "Error analyzing token count for term '{0}'. Reason: '{1}'. DebugInformation: {2}",
-                    term.Replace(Environment.NewLine, String.Empty),
-                    ex.FailureReason, ex.DebugInformation);
-                _logger.LogInformation("Trying again for term '{0}", term);
+                _logger.LogError(ex, "Error analyzing token count for term '{0}'.", term.Replace(Environment.NewLine, String.Empty));
+                _logger.LogInformation("Trying again for term '{0}'", term.Replace(Environment.NewLine, String.Empty));
 
                 // Try again. (this is really just for when we run out of sockets)
                 analyzeResponse = await this._elasticClient.Indices.AnalyzeAsync(
-                    a => a
-                    .Index(indexForAnalysis)
-                    .Analyzer("nostem")
-                    .Text(term)
+                    new AnalyzeIndexRequest(indexForAnalysis)
+                    {
+                        Analyzer = "nostem",
+                        Text = new[] { term }
+                    }
                 );
             }
 
-            if (!analyzeResponse.IsValid)
+            if (!analyzeResponse.IsValidResponse)
             {
                 _logger.LogError("Elasticsearch Response for GetTokenCount is Not Valid.  Term '{0}'", term);
-                _logger.LogError("Returned debug info: {0}.", analyzeResponse.DebugInformation);
+                _logger.LogError("Returned error reason: {0}.", analyzeResponse.ElasticsearchServerError?.Error?.Reason);
                 throw new APIErrorException(500, "Errors Occurred.");
             }
 

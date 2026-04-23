@@ -1,26 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
-using Nest;
-using Elasticsearch.Net;
-
-using NSwag.AspNetCore;
-using NJsonSchema;
-using System.Reflection;
-
-using NCI.OCPL.Api.Common;
 using NCI.OCPL.Api.BestBets.Services;
+using NCI.OCPL.Api.Common;
 
 namespace NCI.OCPL.Api.BestBets
 {

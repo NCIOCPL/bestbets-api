@@ -1,36 +1,34 @@
-﻿using System;
-using Nest;
+﻿using System.Text.Json.Serialization;
 
 namespace NCI.OCPL.Api.BestBets
 {
     /// <summary>
     /// Represents Display information about a Best Bet
     /// </summary>
-    [ElasticsearchType(RelationName = "categorydisplay")]
     public class BestBetsCategoryDisplay : IBestBetDisplay
     {
         /// <summary>
         /// Gets or sets the name of the category for this Best Bet Match
         /// </summary>
-        [Text(Name = "name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the content ID of the category of this match
         /// </summary>
-        [Text(Name = "contentid")]
+        [JsonPropertyName("contentid")]
         public string ID { get; set; }
 
         /// <summary>
         /// Gets or sets the HTML for display for this category
         /// </summary>
-        [Text(Name = "content")]
+        [JsonPropertyName("content")]
         public string HTML { get; set; }
 
         /// <summary>
         /// Gets the weight of this category to determine ordering on display
         /// </summary>
-        [Text(Name = "weight")]
+        [JsonPropertyName("weight")]
         public int Weight { get; set; }
 
         /// <summary>

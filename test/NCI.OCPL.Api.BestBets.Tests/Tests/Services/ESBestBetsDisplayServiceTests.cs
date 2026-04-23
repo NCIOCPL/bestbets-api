@@ -1,24 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging.Testing;
+using Microsoft.Extensions.Options;
 
-using Xunit;
+using Elastic.Clients.Elasticsearch;
 using Moq;
-using RichardSzalay.MockHttp;
+using Xunit;
 
-using NCI.OCPL.Api.Common.Testing;
 using NCI.OCPL.Api.Common;
+using NCI.OCPL.Api.Common.Testing;
 
-using Elasticsearch.Net;
-using Nest;
 
 using NCI.OCPL.Api.BestBets.Services;
 using NCI.OCPL.Api.BestBets.Tests.ESDisplayTestData;
+using System.Threading.Tasks;
 
 namespace NCI.OCPL.Api.BestBets.Tests.ESBestBetsDisplayServiceTests
 {
@@ -38,27 +34,16 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESBestBetsDisplayServiceTests
         /// Test that URI for Elasticsearch is set up correctly.
         /// </summary>
         [Theory, MemberData(nameof(JsonData))]
-        public async void GetBestBetForDisplay_TestURISetup(BaseDisplayTestData data)
+        public async Task GetBestBetForDisplay_TestURISetup(BaseDisplayTestData data)
         {
             Uri esURI = null;
-
-            ElasticsearchInterceptingConnection conn = new ElasticsearchInterceptingConnection();
-            conn.RegisterRequestHandlerForType<Nest.GetResponse<BestBetsCategoryDisplay>>((req, res) =>
-            {
-                //Get the file name for this round
-                res.Stream = TestingTools.GetTestFileAsStream("ESDisplayData/" + data.TestFilePath);
-
-                res.StatusCode = 200;
-
-                esURI = req.Uri;
-            });
-
-            //While this has a URI, it does not matter, an InMemoryConnection never requests
-            //from the server.
-            var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
-
-            var connectionSettings = new ConnectionSettings(pool, conn);
-            IElasticClient client = new ElasticClient(connectionSettings);
+            string responseBody = TestingTools.ReadTestFile("ESDisplayData/" + data.TestFilePath);
+            var settings = TestingElasticsearchClientSettingsFactory.Create(
+                responseBody,
+                200,
+                details => esURI = details.Uri
+            );
+            ElasticsearchClient client = new ElasticsearchClient(settings);
 
             // Setup the mocked Options
             IOptions<CGBBIndexOptions> bbClientOptions = GetMockOptions();
@@ -86,20 +71,10 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESBestBetsDisplayServiceTests
         /// Test failure to connect to and retrieve response from API.
         /// </summary>
         [Fact()]
-        public async void GetBestBetForDisplay_TestAPIConnectionFailure()
+        public async Task GetBestBetForDisplay_TestAPIConnectionFailure()
         {
-            ElasticsearchInterceptingConnection conn = new ElasticsearchInterceptingConnection();
-            conn.RegisterRequestHandlerForType<Nest.GetResponse<BestBetsCategoryDisplay>>((req, res) =>
-            {
-                res.StatusCode = 500;
-            });
-
-            //While this has a URI, it does not matter, an InMemoryConnection never requests
-            //from the server.
-            var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
-
-            var connectionSettings = new ConnectionSettings(pool, conn);
-            IElasticClient client = new ElasticClient(connectionSettings);
+            var settings = TestingElasticsearchClientSettingsFactory.Create("{}", 500);
+            ElasticsearchClient client = new ElasticsearchClient(settings);
 
             // Setup the mocked Options
             IOptions<CGBBIndexOptions> bbClientOptions = GetMockOptions();
@@ -114,20 +89,10 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESBestBetsDisplayServiceTests
         /// Test invalid response from API.
         /// </summary>
         [Fact()]
-        public async void GetBestBetForDisplay_TestInvalidResponse()
+        public async Task GetBestBetForDisplay_TestInvalidResponse()
         {
-            ElasticsearchInterceptingConnection conn = new ElasticsearchInterceptingConnection();
-            conn.RegisterRequestHandlerForType<Nest.GetResponse<BestBetsCategoryDisplay>>((req, res) =>
-            {
-
-            });
-
-            //While this has a URI, it does not matter, an InMemoryConnection never requests
-            //from the server.
-            var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
-
-            var connectionSettings = new ConnectionSettings(pool, conn);
-            IElasticClient client = new ElasticClient(connectionSettings);
+            var settings = TestingElasticsearchClientSettingsFactory.Create("not-json", 200);
+            ElasticsearchClient client = new ElasticsearchClient(settings);
 
             // Setup the mocked Options
             IOptions<CGBBIndexOptions> bbClientOptions = GetMockOptions();
@@ -144,9 +109,9 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESBestBetsDisplayServiceTests
         /// <param name="data"></param>
         /// <returns></returns>
         [Theory, MemberData(nameof(JsonData))]
-        public async void GetBestBetForDisplay_DataLoading(BaseDisplayTestData data)
+        public async Task GetBestBetForDisplay_DataLoading(BaseDisplayTestData data)
         {
-            IElasticClient client = GetElasticClientWithData(data);
+            ElasticsearchClient client = GetElasticClientWithData(data);
 
             // Setup the mocked Options
             IOptions<CGBBIndexOptions> bbClientOptions = GetMockOptions();
@@ -162,9 +127,13 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESBestBetsDisplayServiceTests
         /// Test for handling API cannot find ID.
         /// </summary>
         [Theory, MemberData(nameof(NotFoundData))]
-        public async void GetBestBetForDisplay_IDNotFoundError(BaseDisplayTestData data)
+        public async Task GetBestBetForDisplay_IDNotFoundError(BaseDisplayTestData data)
         {
-            IElasticClient client = GetElasticClientWithData(data);
+            // This test needs the mock ES instance to return a 404 status, and therefore can't use the
+            // same GetElasticClientWithData method as the other tests.
+            string responseBody = TestingTools.ReadTestFile("ESDisplayData/" + data.TestFilePath);
+            var settings = TestingElasticsearchClientSettingsFactory.Create(responseBody, 404);
+            ElasticsearchClient client = new ElasticsearchClient(settings);
 
             // Setup the mocked Options
             IOptions<CGBBIndexOptions> bbClientOptions = GetMockOptions();
@@ -179,9 +148,9 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESBestBetsDisplayServiceTests
         /// Test for handling invalid ID.
         /// </summary>
         [Theory, MemberData(nameof(JsonData))]
-        public async void GetBestBetForDisplay_InvalidIDError(BaseDisplayTestData data)
+        public async Task GetBestBetForDisplay_InvalidIDError(BaseDisplayTestData data)
         {
-            IElasticClient client = GetElasticClientWithData(data);
+            ElasticsearchClient client = GetElasticClientWithData(data);
 
             // Setup the mocked Options
             IOptions<CGBBIndexOptions> bbClientOptions = GetMockOptions();
@@ -192,24 +161,10 @@ namespace NCI.OCPL.Api.BestBets.Tests.ESBestBetsDisplayServiceTests
             Assert.Equal(400, ex.HttpStatusCode);
         }
 
-        private IElasticClient GetElasticClientWithData(BaseDisplayTestData data) {
-            ElasticsearchInterceptingConnection conn = new ElasticsearchInterceptingConnection();
-            conn.RegisterRequestHandlerForType<Nest.GetResponse<BestBetsCategoryDisplay>>((req, res) =>
-            {
-                //Get the file name for this round
-                res.Stream = TestingTools.GetTestFileAsStream("ESDisplayData/" + data.TestFilePath);
-
-                res.StatusCode = 200;
-            });
-
-            //While this has a URI, it does not matter, an InMemoryConnection never requests
-            //from the server.
-            var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
-
-            var connectionSettings = new ConnectionSettings(pool, conn);
-            IElasticClient client = new ElasticClient(connectionSettings);
-
-            return client;
+        private ElasticsearchClient GetElasticClientWithData(BaseDisplayTestData data) {
+            string responseBody = TestingTools.ReadTestFile("ESDisplayData/" + data.TestFilePath);
+            var settings = TestingElasticsearchClientSettingsFactory.Create(responseBody, 200);
+            return new ElasticsearchClient(settings);
         }
 
         private IOptions<CGBBIndexOptions> GetMockOptions()

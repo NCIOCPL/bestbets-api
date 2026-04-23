@@ -8,9 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-using Nest;
-using Elasticsearch.Net;
-
 using NCI.OCPL.Api.Common;
 
 namespace NCI.OCPL.Api.BestBets.Controllers
@@ -91,7 +88,7 @@ namespace NCI.OCPL.Api.BestBets.Controllers
             if (String.IsNullOrWhiteSpace(term))
                 throw new APIErrorException(400, "You must supply a search term");
 
-            // Term comes from from a catch-all parameter, so make sure it's been decoded.
+            // Term comes from a catch-all parameter, so make sure it's been decoded.
             term = WebUtility.UrlDecode(term);
 
             // Step 1. Remove Punctuation

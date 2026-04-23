@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-using Elasticsearch.Net;
-using Nest;
+using Elastic.Clients.Elasticsearch;
+using Elastic.Clients.Elasticsearch.QueryDsl;
 
 using NCI.OCPL.Api.Common;
 
@@ -21,7 +21,7 @@ namespace NCI.OCPL.Api.BestBets.Services
     /// </summary>
     public class ESBestBetsMatchService : IBestBetsMatchService
     {
-        private IElasticClient _elasticClient;
+        private ElasticsearchClient _elasticClient;
         private ITokenAnalyzerService _tokenAnalyzer;
         private CGBBIndexOptions _bestbetsConfig;
         private readonly ILogger<ESBestBetsMatchService> _logger;
@@ -29,7 +29,7 @@ namespace NCI.OCPL.Api.BestBets.Services
         /// <summary>
         /// Creates a new instance of a ESBestBetsMatchService
         /// </summary>
-        public ESBestBetsMatchService(IElasticClient client,
+        public ESBestBetsMatchService(ElasticsearchClient client,
             ITokenAnalyzerService tokenAnalyzer,
             IOptions<CGBBIndexOptions> config,
             ILogger<ESBestBetsMatchService> logger)
@@ -45,7 +45,7 @@ namespace NCI.OCPL.Api.BestBets.Services
         /// </summary>
         /// <param name="collection">The search index to use</param>
         /// <param name="language">The two-character language code to constrain the matches to</param>
-        /// <param name="cleanedTerm">A term that have been cleaned of punctuation and special characters</param>
+        /// <param name="cleanedTerm">A term that has been cleaned of punctuation and special characters</param>
         /// <returns>An array of category ids</returns>
         public async Task<string[]> GetMatches(string collection, string language, string cleanedTerm)
         {
@@ -100,7 +100,7 @@ namespace NCI.OCPL.Api.BestBets.Services
                     // For example, "Breast Cancer Treatment" would return the
                     // Best Bets for "Breast Cancer" and "Breast Cancer Treatment".
                     // However, as "Breast Cancer Treatment" is more specific, a
-                    // BB editor has created a Negated synonyn of "Treatment" for
+                    // BB editor has created a Negated synonym of "Treatment" for
                     // the "Breast Cancer" category.  So we should only show
                     // "Breast Cancer Treatment" to the user.
                     if (!excludedIDs.Contains(match.ContentID))
@@ -137,21 +137,37 @@ namespace NCI.OCPL.Api.BestBets.Services
         private async Task<IEnumerable<BestBetsMatch>> GetSetOfMatchesAsync(string collection, string cleanedTerm, int searchTokenCount, string lang, int matchedTokenCount)
         {
             //This is the query
-            var matchQuery = new NumericRangeQuery { Field = "tokencount", LessThanOrEqualTo = matchedTokenCount } &&
-                             new TermQuery { Field = "is_exact", Value = false } &&
-                             new TermQuery { Field = "language", Value = lang } &&
-                             new MatchQuery { Field = "synonym", Query = cleanedTerm, MinimumShouldMatch = matchedTokenCount } &&
-                             new TermQuery { Field = "record_type", Value = "synonyms" };
+            var mustClauses = new List<Query>
+            {
+                new NumberRangeQuery(new Field("tokencount")) { Lte = matchedTokenCount },
+                new TermQuery { Field = new Field("is_exact"), Value = false },
+                new TermQuery { Field = new Field("language"), Value = lang },
+                new MatchQuery { Field = new Field("synonym"), Query = cleanedTerm, MinimumShouldMatch = matchedTokenCount.ToString() },
+                new TermQuery { Field = new Field("record_type"), Value = "synonyms" }
+            };
+
+            Query matchQuery = new BoolQuery { Must = mustClauses };
 
             if (searchTokenCount == matchedTokenCount)
             {
                 //Add in exact match query too
-                matchQuery = matchQuery ||
-                             new TermQuery { Field = "tokencount", Value = matchedTokenCount } &&
-                             new TermQuery { Field = "is_exact", Value = true } &&
-                             new TermQuery { Field = "language", Value = lang } &&
-                             new MatchQuery { Field = "synonym", Query = cleanedTerm, MinimumShouldMatch = matchedTokenCount } &&
-                             new TermQuery { Field = "record_type", Value = "synonyms"};
+                var exactClauses = new List<Query>
+                {
+                    new TermQuery { Field = new Field("tokencount"), Value = matchedTokenCount },
+                    new TermQuery { Field = new Field("is_exact"), Value = true },
+                    new TermQuery { Field = new Field("language"), Value = lang },
+                    new MatchQuery { Field = new Field("synonym"), Query = cleanedTerm, MinimumShouldMatch = matchedTokenCount.ToString() },
+                    new TermQuery { Field = new Field("record_type"), Value = "synonyms" }
+                };
+
+                matchQuery = new BoolQuery
+                {
+                    Should = new List<Query>
+                    {
+                        matchQuery,
+                        new BoolQuery { Must = exactClauses }
+                    }
+                };
             }
 
             try
@@ -160,7 +176,7 @@ namespace NCI.OCPL.Api.BestBets.Services
                     this._bestbetsConfig.PreviewAliasName :
                     this._bestbetsConfig.LiveAliasName;
 
-                var req = new SearchRequest<BestBetsMatch>(alias)
+                var req = new SearchRequest(alias)
                 {
                     Query = matchQuery,
                     Size = 10000 //Make sure this more than the number of synonyms
@@ -169,14 +185,14 @@ namespace NCI.OCPL.Api.BestBets.Services
                 var response = await this._elasticClient.SearchAsync<BestBetsMatch>(req);
 
                 //Test if response is valid
-                if (!response.IsValid)
+                if (!response.IsValidResponse)
                 {
                     _logger.LogError("Elasticsearch Response is Not Valid. Term '{0}'", cleanedTerm.Replace(Environment.NewLine, String.Empty));
-                    _logger.LogError("Returned debug info: {0}.", response.DebugInformation);
+                    _logger.LogError("Returned error reason: {0}.", response.ElasticsearchServerError?.Error?.Reason);
                     throw new APIErrorException(500, "Errors Occurred.");
                 }
 
-                return response.Documents;
+                return response.Hits.Select(h => h.Source).Where(s => s != null)!;
 
             }
             catch (APIErrorException)
