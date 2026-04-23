@@ -1,25 +1,14 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging.Testing;
-
-using Elasticsearch.Net;
-using Nest;
-
-using Newtonsoft.Json.Linq;
 
 using Moq;
 using Xunit;
 
 using NCI.OCPL.Api.Common;
-using NCI.OCPL.Api.Common.Testing;
 using NCI.OCPL.Api.BestBets;
 using NCI.OCPL.Api.BestBets.Controllers;
-using NCI.OCPL.Api.BestBets.Tests.ESHealthTestData;
 using NCI.OCPL.Api.BestBets.Tests.ESDisplayTestData;
 
 namespace NCI.OCPL.Api.BestBets.Tests
@@ -36,7 +25,7 @@ namespace NCI.OCPL.Api.BestBets.Tests
         };
 
         [Fact]
-        public async void Get_Error_CollectionEmpty()
+        public async Task Get_Error_CollectionEmpty()
         {
             Mock<IBestBetsDisplayService> displayService = new Mock<IBestBetsDisplayService>();
             Mock<IBestBetsMatchService> matchService = new Mock<IBestBetsMatchService>();
@@ -54,7 +43,7 @@ namespace NCI.OCPL.Api.BestBets.Tests
         }
 
         [Fact]
-        public async void Get_Error_CollectionBad()
+        public async Task Get_Error_CollectionBad()
         {
             Mock<IBestBetsDisplayService> displayService = new Mock<IBestBetsDisplayService>();
             Mock<IBestBetsMatchService> matchService = new Mock<IBestBetsMatchService>();
@@ -72,7 +61,7 @@ namespace NCI.OCPL.Api.BestBets.Tests
         }
 
         [Fact]
-        public async void Get_Error_LanguageEmpty()
+        public async Task Get_Error_LanguageEmpty()
         {
             Mock<IBestBetsDisplayService> displayService = new Mock<IBestBetsDisplayService>();
             Mock<IBestBetsMatchService> matchService = new Mock<IBestBetsMatchService>();
@@ -90,7 +79,7 @@ namespace NCI.OCPL.Api.BestBets.Tests
         }
 
         [Fact]
-        public async void Get_Error_LanguageBad()
+        public async Task Get_Error_LanguageBad()
         {
             Mock<IBestBetsDisplayService> displayService = new Mock<IBestBetsDisplayService>();
             Mock<IBestBetsMatchService> matchService = new Mock<IBestBetsMatchService>();
@@ -108,7 +97,7 @@ namespace NCI.OCPL.Api.BestBets.Tests
         }
 
         [Fact]
-        public async void Get_Error_SearchTermBad()
+        public async Task Get_Error_SearchTermBad()
         {
             Mock<IBestBetsDisplayService> displayService = new Mock<IBestBetsDisplayService>();
             Mock<IBestBetsMatchService> matchService = new Mock<IBestBetsMatchService>();
@@ -127,7 +116,7 @@ namespace NCI.OCPL.Api.BestBets.Tests
 
 
         [Theory, MemberData(nameof(XmlDeserializingData))]
-        public async void Get_EnglishTerm(string searchTerm, BaseDisplayTestData displayData)
+        public async Task Get_EnglishTerm(string searchTerm, BaseDisplayTestData displayData)
         {
 
 
@@ -177,7 +166,7 @@ namespace NCI.OCPL.Api.BestBets.Tests
         /// Verify that Status returns successfully when the health check service is healthy.
         /// </summary>
         [Fact]
-        public async void IsHealthy_Healthy()
+        public async Task IsHealthy_Healthy()
         {
             IBestBetsDisplayService displayService = null;
             IBestBetsMatchService matchService = null;
@@ -209,7 +198,7 @@ namespace NCI.OCPL.Api.BestBets.Tests
         /// Verify that Status fails for the unhealthy health check service.
         /// </summary>
         [Fact]
-        public async void IsHealthy_Unhealthy()
+        public async Task IsHealthy_Unhealthy()
         {
             IBestBetsDisplayService displayService = null;
             IBestBetsMatchService matchService = null;

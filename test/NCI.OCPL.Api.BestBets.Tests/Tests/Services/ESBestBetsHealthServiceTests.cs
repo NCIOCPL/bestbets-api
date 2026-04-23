@@ -1,16 +1,12 @@
-using System;
-using System.Collections.Generic;
-
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging.Testing;
+using Microsoft.Extensions.Options;
 
-using Nest;
-using Elasticsearch.Net;
+using Elastic.Clients.Elasticsearch;
 using Xunit;
 
+using NCI.OCPL.Api.Common.Testing;
 using NCI.OCPL.Api.BestBets.Services;
-using NCI.OCPL.Api.BestBets.Tests.ESHealthTestData;
-using NCI.OCPL.Api.BestBets.Tests.ESMatchTestData;
+using System.Threading.Tasks;
 
 namespace NCI.OCPL.Api.BestBets.Tests
 {
@@ -19,11 +15,9 @@ namespace NCI.OCPL.Api.BestBets.Tests
         [Theory]
         [InlineData("green")]
         [InlineData("yellow")]
-        public async void HealthStatus_Healthy(string datafile)
+        public async Task HealthStatus_Healthy(string datafile)
         {
-            ESHealthConnection connection = new ESHealthConnection(datafile);
-
-            ESBestBetsHealthService service = GetHealthService(connection);
+            ESBestBetsHealthService service = GetHealthServiceFromFile($"ESHealthData/{datafile}.json", 200);
 
             bool isHealthy = await service.IsHealthy();
 
@@ -33,10 +27,9 @@ namespace NCI.OCPL.Api.BestBets.Tests
         [Theory]
         [InlineData("red")]
         [InlineData("unexpected")]   // i.e. "Unexpected color"
-        public async void HealthStatus_Unhealthy(string datafile)
+        public async Task HealthStatus_Unhealthy(string datafile)
         {
-            ESHealthConnection connection = new ESHealthConnection(datafile);
-            ESBestBetsHealthService service = GetHealthService(connection);
+            ESBestBetsHealthService service = GetHealthServiceFromFile($"ESHealthData/{datafile}.json", 200);
 
             bool isHealthy = await service.IsHealthy();
 
@@ -51,24 +44,24 @@ namespace NCI.OCPL.Api.BestBets.Tests
         [Theory]
         [InlineData(404)]
         [InlineData(500)]
-        public async void HealthStatus_InvalidResponse(int httpStatus)
+        public async Task HealthStatus_InvalidResponse(int httpStatus)
         {
-            ESErrorConnection connection = new ESErrorConnection(httpStatus);
-            ESBestBetsHealthService service = GetHealthService(connection);
+            ESBestBetsHealthService service = GetHealthService("{}", httpStatus);
 
             bool res = await service.IsHealthy();
             Assert.False(res);
-
         }
 
-        private ESBestBetsHealthService GetHealthService(IConnection connection)
+        private ESBestBetsHealthService GetHealthServiceFromFile(string filename, int statusCode)
         {
-            //While this has a URI, it does not matter, an InMemoryConnection never requests
-            //from the server.
-            var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
+            string responseBody = TestingTools.ReadTestFile(filename);
+            return GetHealthService(responseBody, statusCode);
+        }
 
-            var connectionSettings = new ConnectionSettings(pool, connection);
-            IElasticClient client = new ElasticClient(connectionSettings);
+        private ESBestBetsHealthService GetHealthService(string responseBody, int statusCode)
+        {
+            var settings = TestingElasticsearchClientSettingsFactory.Create(responseBody, statusCode);
+            ElasticsearchClient client = new ElasticsearchClient(settings);
 
             IOptions<CGBBIndexOptions> config = GetMockConfig();
 

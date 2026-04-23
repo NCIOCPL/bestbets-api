@@ -1,7 +1,6 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NCI.OCPL.Api.BestBets.Tests
 {
@@ -19,7 +18,7 @@ namespace NCI.OCPL.Api.BestBets.Tests
         /// <returns></returns>
         public bool Equals(string[] x, string[] y)
         {
-            // If the items are both null, or if one or the other is null, return 
+            // If the items are both null, or if one or the other is null, return
             // the correct response right away.
 
             if (x == null && y == null)

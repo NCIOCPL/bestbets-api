@@ -17,7 +17,7 @@ namespace NCI.OCPL.Api.BestBets
          string Username {get; set;}
 
          /// <summary>
-         /// Gets and sets the Username for authenticating to the ES server
+         /// Gets and sets the Password for authenticating to the ES server
          /// </summary>
          string Password {get; set;}
     }

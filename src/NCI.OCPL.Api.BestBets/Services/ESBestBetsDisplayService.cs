@@ -1,17 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-using Elasticsearch.Net;
-using Nest;
-
-using Newtonsoft.Json;
-
-using NCI.OCPL.Api.BestBets;
+using Elastic.Clients.Elasticsearch;
 using NCI.OCPL.Api.Common;
 
 
@@ -23,7 +16,7 @@ namespace NCI.OCPL.Api.BestBets.Services
     /// </summary>
     public class ESBestBetsDisplayService : IBestBetsDisplayService
     {
-        private IElasticClient _elasticClient;
+        private ElasticsearchClient _elasticClient;
         private CGBBIndexOptions _bestbetsConfig;
         private readonly ILogger<ESBestBetsDisplayService> _logger;
 
@@ -33,7 +26,7 @@ namespace NCI.OCPL.Api.BestBets.Services
         /// <param name="client">The client to be used for connections</param>
         /// <param name="config">The client to be used for connections</param>
         /// <param name="logger">The client to be used for connections</param>
-        public ESBestBetsDisplayService(IElasticClient client,
+        public ESBestBetsDisplayService(ElasticsearchClient client,
             IOptions<CGBBIndexOptions> config,
             ILogger<ESBestBetsDisplayService> logger) {
             _elasticClient = client;
@@ -80,22 +73,20 @@ namespace NCI.OCPL.Api.BestBets.Services
                     throw new APIErrorException(500, $"Could not fetch category ID {categoryID}");
                 }
 
+                // The ES client treats "Not Found" and server errors as both "Not Found" and "Not Valid",
+                // so we also have to check the status code to determine what's really going on.
+                if (!response.Found && response.ApiCallDetails.HttpStatusCode == 404)
+                {
+                    throw new APIErrorException(404, "Category not found.");
+                }
+
                 // If the API's response isn't valid, throw an error and return 500 status code.
-                if (!response.IsValid)
+                if (!response.IsValidResponse)
                 {
                     throw new APIErrorException(500, "Errors occurred.");
                 }
 
-                // If the API finds the category ID, return the resource.
-                if (response.Found && response.IsValid)
-                {
-                    result = response.Source;
-                }
-                // If the API cannot find the category ID, throw an error and return 404 status code.
-                else if (!response.Found && response.IsValid)
-                {
-                    throw new APIErrorException(404, "Category not found.");
-                }
+                result = response.Source;
             }
             else
             {

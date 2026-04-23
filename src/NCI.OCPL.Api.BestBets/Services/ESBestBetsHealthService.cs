@@ -1,17 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-using Elasticsearch.Net;
-using Nest;
-
-using Newtonsoft.Json;
-
-using NCI.OCPL.Api.BestBets;
+using Elastic.Clients.Elasticsearch;
+using Elastic.Clients.Elasticsearch.Cluster;
 using NCI.OCPL.Api.Common;
 
 
@@ -23,7 +18,7 @@ namespace NCI.OCPL.Api.BestBets.Services
     /// </summary>
     public class ESBestBetsHealthService : IHealthCheckService
     {
-        private IElasticClient _elasticClient;
+        private ElasticsearchClient _elasticClient;
         private CGBBIndexOptions _bestbetsConfig;
         private readonly ILogger<ESBestBetsHealthService> _logger;
 
@@ -33,7 +28,7 @@ namespace NCI.OCPL.Api.BestBets.Services
         /// <param name="client">The client to be used for connections</param>
         /// <param name="config">The client to be used for connections</param>
         /// <param name="logger">The client to be used for connections</param>
-        public ESBestBetsHealthService(IElasticClient client,
+        public ESBestBetsHealthService(ElasticsearchClient client,
             IOptions<CGBBIndexOptions> config,
             ILogger<ESBestBetsHealthService> logger) {
             _elasticClient = client;
@@ -75,17 +70,16 @@ namespace NCI.OCPL.Api.BestBets.Services
 
             try
             {
-                //ClusterHealthResponse response = await _elasticClient.Cluster.HealthAsync(hd => hd.Index(alias));
-                ClusterHealthResponse response = await _elasticClient.Cluster.HealthAsync(null, hd=> hd.Index(alias));
+                HealthResponse response = await _elasticClient.Cluster.HealthAsync(new HealthRequest(alias));
 
-                if (!response.IsValid)
+                if (!response.IsValidResponse)
                 {
                     _logger.LogError($"Error checking ElasticSearch health for {alias}.");
-                    _logger.LogError($"Returned debug info: {response.DebugInformation}.");
+                    _logger.LogError("Returned error reason: {reason}.", response.ElasticsearchServerError?.Error?.Reason);
                 }
                 else
                 {
-                    if (response.Status == Health.Green || response.Status == Health.Yellow)
+                    if (response.Status == HealthStatus.Green || response.Status == HealthStatus.Yellow)
                     {
                         //This is the only condition that will return true
                         return true;

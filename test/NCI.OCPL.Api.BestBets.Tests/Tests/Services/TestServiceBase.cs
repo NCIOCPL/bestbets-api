@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 
 using Moq;
-
-
 namespace NCI.OCPL.Api.BestBets.Tests
 {
     /// <summary>

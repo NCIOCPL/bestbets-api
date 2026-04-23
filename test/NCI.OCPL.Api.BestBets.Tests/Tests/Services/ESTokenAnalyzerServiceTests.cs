@@ -1,19 +1,20 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
+using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
+using Elastic.Clients.Elasticsearch;
+using Elastic.Transport;
 using Microsoft.Extensions.Logging.Testing;
 using Microsoft.Extensions.Options;
 
-using Nest;
-using Elasticsearch.Net;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 using NCI.OCPL.Api.Common.Testing;
 using NCI.OCPL.Api.BestBets.Services;
-
+using System.Threading.Tasks;
 
 namespace NCI.OCPL.Api.BestBets.Tests
 {
@@ -44,38 +45,24 @@ namespace NCI.OCPL.Api.BestBets.Tests
         /// Verify the GetTokenCount() method knows how to handle responses
         /// from elastic search.
         /// </summary>
-        /// <param name="searchTerm">The search term to tokenizse.</param>
+        /// <param name="searchTerm">The search term to tokenize.</param>
         /// <param name="responseTokens">The simulated response from elasticsearch.</param>
         /// <param name="expectedCount">The expected token count.</param>
         /// <returns></returns>
         [Theory, MemberData(nameof(GetTokenCountData))]
-        public async void GetTokenCount_Responses(
+        public async Task GetTokenCount_Responses(
             string searchTerm,
             object[] responseTokens,
             int expectedCount
         )
         {
+            JsonObject resObject = new JsonObject();
+            resObject["tokens"] = new JsonArray(responseTokens
+                .Select(responseToken => JsonSerializer.SerializeToNode(responseToken))
+                .ToArray());
 
-            ElasticsearchInterceptingConnection conn = new ElasticsearchInterceptingConnection();
-
-            conn.RegisterRequestHandlerForType<AnalyzeResponse>(
-                (req, res) =>
-                {
-                    JObject resObject = new JObject();
-                    resObject["tokens"] = JArray.FromObject(responseTokens);
-                    byte[] byteArray = Encoding.UTF8.GetBytes(resObject.ToString());
-
-                    res.Stream = new MemoryStream(byteArray);
-                    res.StatusCode = 200;
-                }
-            );
-
-            //While this has a URI, it does not matter, an InMemoryConnection never requests
-            //from the server.
-            var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
-
-            var connectionSettings = new ConnectionSettings(pool, conn);
-            IElasticClient client = new ElasticClient(connectionSettings);
+            var settings = TestingElasticsearchClientSettingsFactory.Create(resObject.ToString(), 200);
+            ElasticsearchClient client = new ElasticsearchClient(settings);
 
             IOptions<CGBBIndexOptions> config = GetMockConfig();
 
